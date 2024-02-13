@@ -6,6 +6,7 @@ import com.github.vinicius2335.certification.domain.model.Certification;
 import com.github.vinicius2335.certification.domain.service.CertificationAnswersService;
 import com.github.vinicius2335.certification.domain.service.DeleteCertificationService;
 import com.github.vinicius2335.certification.domain.service.VerifyIfHasCertificationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class StudentController {
      * @return uma mensagem
      */
     @PostMapping("/verifyHasCertification")
-    public String verifyHasCertification(@RequestBody StudentVerifyHasCertification verifyHasCertification){
+    public String verifyHasCertification(@RequestBody @Valid StudentVerifyHasCertification verifyHasCertification){
         boolean result = verifyIfHasCertificationService.execute(verifyHasCertification);
 
         if (result){
@@ -44,7 +45,7 @@ public class StudentController {
      * @return uma certificação
      */
     @PostMapping("/certification/answer")
-    public ResponseEntity<Certification> certificationAnswer(@RequestBody StudentCertificationAnswerRequest request) {
+    public ResponseEntity<Certification> certificationAnswer(@RequestBody @Valid StudentCertificationAnswerRequest request) {
         Certification certification = certificationAnswersService.execute(request);
         return ResponseEntity
                 .status(HttpStatus.OK)
