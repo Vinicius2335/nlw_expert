@@ -3,6 +3,8 @@ package com.github.vinicius2335.certification.domain.service;
 import com.github.vinicius2335.certification.api.representation.model.request.StudentCertificationAnswerRequest;
 import com.github.vinicius2335.certification.api.representation.model.request.StudentQuestionAnswerRequest;
 import com.github.vinicius2335.certification.api.representation.model.request.StudentVerifyHasCertification;
+import com.github.vinicius2335.certification.domain.exception.BusinessRulesException;
+import com.github.vinicius2335.certification.domain.exception.StudentNotFoundException;
 import com.github.vinicius2335.certification.domain.model.Alternative;
 import com.github.vinicius2335.certification.domain.model.Certification;
 import com.github.vinicius2335.certification.domain.model.Question;
@@ -10,6 +12,7 @@ import com.github.vinicius2335.certification.domain.model.Student;
 import com.github.vinicius2335.certification.domain.repository.CertificationRepository;
 import com.github.vinicius2335.certification.domain.repository.QuestionRepository;
 import com.github.vinicius2335.certification.domain.repository.StudentRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,10 +27,11 @@ public class CertificationAnswersService {
     private final CertificationRepository certificationRepository;
     private final VerifyIfHasCertificationService verifyIfHasCertificationService;
 
+    @Transactional
     public Certification execute(StudentCertificationAnswerRequest request) {
         // Verificar se o estudante existe
         Student student = studentRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Estudante não existe..."));
+                .orElseThrow(() -> new StudentNotFoundException("Estudante não existe..."));
 
         // Verifica se o estudante já realizou a prova de certificação
         StudentVerifyHasCertification verifyStudent = StudentVerifyHasCertification.builder()
@@ -38,7 +42,7 @@ public class CertificationAnswersService {
         boolean hasCertification = verifyIfHasCertificationService.execute(verifyStudent);
 
         if(hasCertification){
-            throw new RuntimeException("Você já tirou sua certificação...");
+            throw new BusinessRulesException("Você já tirou sua certificação...");
         }
 
         // Buscar as alternativas das perguntas para verificar se está correta ou não
@@ -59,13 +63,13 @@ public class CertificationAnswersService {
                     Question questionAnswer = questionsByTechnology.stream()
                             .filter(question -> question.getId().equals(studentQuestionAnswer.getQuestionId()))
                             .findFirst()
-                            .orElseThrow(() -> new RuntimeException("Nenhuma pergunta foi encontrada..."));
+                            .orElseThrow(() -> new BusinessRulesException("Nenhuma pergunta foi encontrada..."));
 
                     // Procura a alternativa correta
                     Alternative correctAlternative = questionAnswer.getAlternatives().stream()
                             .filter(Alternative::isCorrect)
                             .findFirst()
-                            .orElseThrow(() -> new RuntimeException("Nenhuma alternativa correta foi encontrada..."));
+                            .orElseThrow(() -> new BusinessRulesException("Nenhuma alternativa correta foi encontrada..."));
 
                     // Verifica se o estudante acertou a resposta
                     studentQuestionAnswer.setCorrect(
