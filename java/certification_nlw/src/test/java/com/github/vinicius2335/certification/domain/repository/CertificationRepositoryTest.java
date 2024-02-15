@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,6 +35,7 @@ class CertificationRepositoryTest {
     @AfterEach
     void tearDown() {
         underTest.deleteAll();
+        studentRepository.deleteAll();
     }
 
     @Test
@@ -85,4 +88,43 @@ class CertificationRepositoryTest {
                 .contains(certification);
     }
 
+    @Test
+    @DisplayName("findById() return optional of certification")
+    void givenUUID_whenFindById_thenReturnOptionalCertification(){
+        //given
+        Certification certification = saveAndReturnNewCertification();
+        //when
+        Optional<Certification> exception = underTest.findById(certification.getId());
+        //then
+        assertThat(exception)
+                .isNotEmpty()
+                .contains(certification);
+    }
+
+    @Test
+    @DisplayName("findById() return empty option of certification")
+    void givenUUID_whenFindById_thenReturnEmptyOptionalCertification(){
+        //given
+        saveAndReturnNewCertification();
+        UUID id = UUID.randomUUID();
+        //when
+        Optional<Certification> expected = underTest.findById(id);
+        //then
+        assertThat(expected)
+                .isEmpty();
+    }
+
+    // delete
+    @Test
+    @DisplayName("delete() remove certification")
+    void givenCertification_whenDelete_thenRemoveCertificationFromDatabase(){
+        //given
+        Certification certification = saveAndReturnNewCertification();
+        //when
+        underTest.delete(certification);
+        //then
+        List<Certification> expected = underTest.findAll();
+        assertThat(expected)
+                .isEmpty();
+    }
 }
