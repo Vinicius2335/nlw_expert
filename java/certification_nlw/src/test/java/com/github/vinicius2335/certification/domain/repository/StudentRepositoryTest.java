@@ -53,8 +53,8 @@ class StudentRepositoryTest {
     }
 
     @Test
-    @DisplayName("saveAndFlush() throws error when student alread exist by email")
-    void givenStudent_whenSaveAndFlush_thenThrowsException(){
+    @DisplayName("saveAndFlush() throws DataIntegrityViolationException when student alread exist by email")
+    void givenStudent_whenSaveAndFlush_thenThrowsDataIntegrityViolationException(){
         //given
         Student studentSaved = saveAndReturnStudent();
         Student studentToSave = Student.builder()

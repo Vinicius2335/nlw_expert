@@ -127,4 +127,20 @@ class CertificationRepositoryTest {
         assertThat(expected)
                 .isEmpty();
     }
+
+    @Test
+    @DisplayName("findByStudentEmailAndTechnology() return list of Certification related by email and technology")
+    void givenEmailAndTechnology_whenFindByStudentEmailAndTechnology_thenReturnListCertification(){
+        //given
+        Certification certification = saveAndReturnNewCertification();
+        String email = certification.getStudent().getEmail();
+        String technology = certification.getTechnology();
+        //when
+        List<Certification> expected = underTest.findByStudentEmailAndTechnology(email, technology);
+        //then
+        assertThat(expected)
+                .isNotNull()
+                .hasSize(1)
+                .contains(certification);
+    }
 }
