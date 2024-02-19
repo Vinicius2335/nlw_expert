@@ -1,6 +1,7 @@
 package com.github.vinicius2335.certification.api.controller;
 
 import com.github.vinicius2335.certification.api.representation.model.response.IQuestionAnswerResponse;
+import com.github.vinicius2335.certification.domain.exception.BusinessRulesException;
 import com.github.vinicius2335.certification.domain.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +25,12 @@ public class QuestionController {
      */
     @GetMapping("/technology/{technology}")
     public List<IQuestionAnswerResponse> findByTechnology(@PathVariable String technology){
-        return questionRepository.customFindByTechnology(technology);
+        List<IQuestionAnswerResponse> listQuestionAnswerResponses = questionRepository.customFindByTechnology(technology);
+
+        if (listQuestionAnswerResponses.isEmpty()){
+            throw new BusinessRulesException("No issues found related to the requested technology");
+        }
+
+        return listQuestionAnswerResponses;
     }
 }
