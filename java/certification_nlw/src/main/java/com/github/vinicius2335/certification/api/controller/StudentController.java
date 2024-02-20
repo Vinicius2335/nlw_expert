@@ -2,6 +2,7 @@ package com.github.vinicius2335.certification.api.controller;
 
 import com.github.vinicius2335.certification.api.representation.model.request.StudentCertificationAnswerRequest;
 import com.github.vinicius2335.certification.api.representation.model.request.StudentVerifyHasCertification;
+import com.github.vinicius2335.certification.domain.exception.BusinessRulesException;
 import com.github.vinicius2335.certification.domain.model.Certification;
 import com.github.vinicius2335.certification.domain.service.CertificationAnswersService;
 import com.github.vinicius2335.certification.domain.service.DeleteCertificationService;
@@ -12,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -29,14 +32,16 @@ public class StudentController {
      * @return uma mensagem
      */
     @PostMapping("/verifyHasCertification")
-    public String verifyHasCertification(@RequestBody @Valid StudentVerifyHasCertification verifyHasCertification){
+    public Map<String, String> verifyHasCertification(@RequestBody @Valid StudentVerifyHasCertification verifyHasCertification){
         boolean result = verifyIfHasCertificationService.execute(verifyHasCertification);
+        Map<String, String> response = new HashMap<>();
 
         if (result){
-            return "Usuário já fez a prova";
+            throw new BusinessRulesException("Usuário já realizou a prova");
         }
 
-        return "Usuário pode fazer a prova";
+        response.put("message", "Usuário pode fazer a prova");
+        return response;
     }
 
     /**

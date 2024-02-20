@@ -2,10 +2,7 @@ package com.github.vinicius2335.certification.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -32,6 +29,7 @@ public class Alternative {
 
     @ManyToOne
     @JoinColumn(name = "question_id", nullable = false)
+    @ToString.Exclude
     private Question question;
 
     private String description;

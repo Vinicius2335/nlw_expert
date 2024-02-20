@@ -3,15 +3,13 @@ package com.github.vinicius2335.certification.domain.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,7 +34,16 @@ public class Question {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "question")
+    @Setter(AccessLevel.NONE)
+    @OneToMany(
+            mappedBy = "question",
+            cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE },
+            orphanRemoval = true)
     @JsonIgnore
-    private List<Alternative> alternatives;
+    private List<Alternative> alternatives = new ArrayList<>();
+
+    public void addAlternative(Alternative alternative){
+        alternative.setQuestion(this);
+        alternatives.add(alternative);
+    }
 }

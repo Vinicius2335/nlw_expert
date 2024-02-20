@@ -1,11 +1,13 @@
 package com.github.vinicius2335.certification.integration;
 
+import com.github.vinicius2335.certification.domain.model.Alternative;
 import com.github.vinicius2335.certification.domain.model.Certification;
 import com.github.vinicius2335.certification.domain.model.Question;
 import com.github.vinicius2335.certification.domain.model.Student;
 import com.github.vinicius2335.certification.domain.repository.CertificationRepository;
 import com.github.vinicius2335.certification.domain.repository.QuestionRepository;
 import com.github.vinicius2335.certification.domain.repository.StudentRepository;
+import com.github.vinicius2335.certification.utils.AlternativeCreator;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -25,6 +27,7 @@ public abstract class BaseIT {
     protected Student student;
     protected Certification certification;
     protected Question question;
+    protected Alternative alternative;
 
     @Autowired
     private StudentRepository studentRepository;
@@ -40,5 +43,14 @@ public abstract class BaseIT {
 
     protected void initQuestionDataBase(){
         questionRepository.saveAndFlush(question);
+    }
+
+    protected void initAlternativeDataBase(){
+        alternative = AlternativeCreator.createAlternative(question);
+        question.addAlternative(alternative);
+    }
+
+    protected void initStudentDataBase(){
+        studentRepository.saveAndFlush(student);
     }
 }

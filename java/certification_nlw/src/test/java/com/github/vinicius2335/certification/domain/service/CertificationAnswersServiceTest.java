@@ -54,11 +54,7 @@ class CertificationAnswersServiceTest {
         question = QuestionCreator.createQuestion();
         alternative = AlternativeCreator.createAlternative(question);
 
-        List<Alternative> alternatives = List.of(
-                alternative
-        );
-
-        question.setAlternatives(alternatives);
+        question.addAlternative(alternative);
         certification = CertificationCreator.createCertification(student);
 
         BDDMockito.lenient().when(mockStudentRepository.findByEmail(ArgumentMatchers.anyString()))
@@ -237,17 +233,15 @@ class CertificationAnswersServiceTest {
     @DisplayName("execute() throws BusinessRulesException when No correct alternative has been found")
     void givenStudentCertificationAnswerRequest_whenExecute_thenNoCorrectAlternativeFoundThrowsBusinessRulesException() {
         //config
-        alternative = AlternativeCreator.createAlternativeIncorrect(question);
-        List<Alternative> alternatives = List.of(
-                alternative
-        );
-        question.setAlternatives(alternatives);
+        question.getAlternatives().remove(alternative);
+        Alternative alternativeIncorrect = AlternativeCreator.createAlternativeIncorrect(question);
+        question.addAlternative(alternativeIncorrect);
 
         //given
         List<StudentQuestionAnswerRequest> studentQuestionAnswers = List.of(
                 StudentQuestionAnswerRequest.builder()
                         .questionId(question.getId())
-                        .alternativeId(alternative.getId())
+                        .alternativeId(alternativeIncorrect.getId())
                         .isCorrect(true)
                         .build()
         );
