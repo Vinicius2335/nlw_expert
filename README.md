@@ -38,6 +38,7 @@ Esse projeto foi desenvolvido com as seguintes tecnologias:
   - Spring Boot Framework
   - Spring Validation
   - MySQL
+  - Rest Assured
 
 ## 💻 Projeto
 
